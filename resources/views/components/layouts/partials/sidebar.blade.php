@@ -1,7 +1,40 @@
+@php
+    $links = [
+        [
+            'name' => 'Inicio',
+            'icon' => 'fa fa-home',
+            'href' => route('inicio'),
+            'active' => Request::is('inicio') ? 'active' : '',
+        ],
+        [
+            'header' => 'ADMINISTRAR PAGINA',
+        ],
+        [
+            'name' => 'Categorías',
+            'icon' => 'fas fa-th-large',
+            'href' => route('category.index'),
+            'active' => Request::is('admin/categorias*') ? 'active' : '',
+        ],
+        [
+            'name' => 'Productos',
+            'icon' => 'fas fa-box',
+            'href' => route('product.index'),
+            'active' => Request::is('admin/productos*') ? 'active' : '',
+        ],
+                [
+            'name' => 'Clientes',
+            'icon' => 'fas fa-users',
+            'href' => route('customer.index'),
+            'active' => Request::is('admin/clientes*') ? 'active' : '',
+        ],
+    ];
+@endphp
+
+
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link">
-        <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+        <img src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
             style="opacity: .8">
         <span class="brand-text font-weight-light">Ferreteria</span>
     </a>
@@ -11,7 +44,7 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
                 <a href="#" class="d-block">Alexander Pierce</a>
@@ -35,15 +68,21 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
-                <li class="nav-item">
-                    <a href="pages/widgets.html" class="nav-link">
-                        <i class="nav-icon fas fa-store"></i>
-                        <p>
-                            Inicio
-                        </p>
-                    </a>
-                </li>
+                @foreach ($links as $link)
+                    <li class="nav-item">
 
+                        @isset($link['header'])
+                        <li class="nav-header">{{ $link['header'] }}</li>
+                    @else
+                        <a href="{{ $link['href'] }}" class="nav-link {{ $link['active'] }}">
+                            <i class="nav-icon {{ $link['icon'] }}"></i>
+                            <p>
+                                {{ $link['name'] }}
+                            </p>
+                        </a>
+                    @endisset
+                    </li>
+                @endforeach
             </ul>
         </nav>
     </div>

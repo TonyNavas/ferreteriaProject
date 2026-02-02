@@ -15,8 +15,8 @@
 </div>
 
 <div class="table-responsive">
-    <table class="table table-sm table-striped table-borderless table-hover text-center rounded overflow-hidden">
-        <thead class="bg-info">
+    <table class="table table-sm table-striped table-hover text-center rounded overflow-hidden">
+        <thead class="thead-theme">
             <tr>
                 {{$thead}}
             </tr>
@@ -27,9 +27,9 @@
     </table>
 </div>
 
-{{-- <style>
+<style>
     .thead-theme{
         background: #343a40;
         color: #ffff;
     }
-</style> --}}
+</style>

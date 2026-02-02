@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sale extends Model
 {
-        protected $fillable = [
+    protected $fillable = [
         'voucher_type',
         'serie',
         'correlative',
@@ -17,4 +17,20 @@ class Sale extends Model
         'total',
         'observation'
     ];
+
+    // Relacion uno a muchos inversa
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    // Relacion muchos a muchos polimorfica
+
+    public function products()
+    {
+        return $this->morphToMany(Product::class, 'productable_id')
+            ->withPivot('quantity', 'price', 'subtotal')
+            ->withTimestamps();
+    }
 }

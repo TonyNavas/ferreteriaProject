@@ -7,6 +7,7 @@
     <title>{{ $title ?? config(app . name) }}</title>
 
     @include('components.layouts.partials.styles')
+
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
@@ -38,5 +39,43 @@
         @include('components.layouts.partials.footer')
 
         @include('components.layouts.partials.scripts')
+
+        <script>
+            document.addEventListener('livewire:init', () => {
+
+                Livewire.on('close-modal', (idModal) => {
+                    $('#' + idModal).modal('hide');
+                })
+                Livewire.on('open-modal', (idModal) => {
+                    $('#' + idModal).modal('show');
+                })
+
+                // Emitir evento eliminar al componente
+                Livewire.on('delete', (e) => {
+                    // alert(e.id+'-'+e.eventName)
+                    Swal.fire({
+                        title: "Estas seguro?",
+                        text: "No podras revertir esto!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Si, Eliminar!",
+                        cancelButtonText: "Cancelar",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Livewire.dispatch(e.eventName, {
+                                id: e.id
+                            })
+                        }
+                    });
+                })
+
+                Livewire.on('swal', data => {
+                    Swal.fire(data[0]);
+                });
+            })
+        </script>
 </body>
+
 </html>
