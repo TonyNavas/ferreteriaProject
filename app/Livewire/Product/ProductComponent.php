@@ -2,14 +2,10 @@
 
 namespace App\Livewire\Product;
 
-use App\Models\Product;
-use Livewire\Component;
-use App\Models\Category;
-use Livewire\Attributes\On;
-use Livewire\WithPagination;
-use Livewire\WithFileUploads;
-use Livewire\Attributes\Title;
 use Illuminate\Support\Facades\Storage;
+use App\Models\{Category, Product};
+use Livewire\{Component, WithFileUploads, WithPagination};
+use Livewire\Attributes\{On, Title};
 
 #[Title('Productos')]
 class ProductComponent extends Component
@@ -31,6 +27,7 @@ class ProductComponent extends Component
         $this->reset(['description']);
         $this->reset(['price']);
         $this->reset(['category_id']);
+        $this->reset(['image']);
         $this->resetErrorBag();
     }
 

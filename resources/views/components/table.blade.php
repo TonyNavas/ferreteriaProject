@@ -15,7 +15,7 @@
 </div>
 
 <div class="table-responsive">
-    <table class="table table-sm table-striped table-hover text-center rounded overflow-hidden">
+    <table class="table table-sm table-striped table-bordered table-hover text-center rounded overflow-hidden">
         <thead class="thead-theme">
             <tr>
                 {{$thead}}

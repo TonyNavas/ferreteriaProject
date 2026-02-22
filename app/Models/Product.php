@@ -2,15 +2,11 @@
 
 namespace App\Models;
 
-use App\Models\Image;
-use App\Models\Quote;
-use App\Models\Category;
-use App\Models\Inventory;
-use App\Models\PurchaseOrder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
+use App\Models\{Category, Image, Inventory, PurchaseOrder, Quote};
 
 class Product extends Model
 {
@@ -59,7 +55,6 @@ class Product extends Model
     {
         return $this->morphedByMany(Quote::class, 'productable');
     }
-
 
     // Relacion polimorfica
 

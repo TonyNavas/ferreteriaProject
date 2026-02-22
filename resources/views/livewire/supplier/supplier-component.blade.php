@@ -1,6 +1,6 @@
 <div class="container-fluid">
 
-    <x-card cardTitle="Listado de clientes ({{$customers->count()}})">
+    <x-card cardTitle="Listado de proveedores ({{$suppliers->count()}})">
         <x-slot:cardTools>
                 <button type="button" class="btn btn-primary" wire:click="openModalCreate">
                     <span>
@@ -21,26 +21,26 @@
                 <th width="3%">Acciones</th>
             </x-slot:thead>
 
-            @forelse ($customers as $index => $customer)
+            @forelse ($suppliers as $index => $supplier)
                 <tr wire:key="Category-{{ $index }}" class="text-center">
-                    <td>{{$customer->id}}</td>
-                    <td>{{$customer->identity->name}}</td>
-                    <td>{{$customer->document_number}}</td>
-                    <td>{{$customer->name}}</td>
-                    <td>{{$customer->email}}</td>
-                    <td>(+505) {{$customer->phone}}</td>
+                    <td>{{$supplier->id}}</td>
+                    <td>{{$supplier->identity->name}}</td>
+                    <td>{{$supplier->document_number}}</td>
+                    <td>{{$supplier->name}}</td>
+                    <td>{{$supplier->email}}</td>
+                    <td>{{$supplier->phone}}</td>
                     <td>
                         <div class="btn-group">
                             <a a href="javascript:void(0)" class="btn btn-sm bg-dark">
                                 <i class="fa fa-eye"></i>
                             </a>
 
-                            <a href="javascript:void(0)" wire:click="openModalEdit({{ $customer->id }})" class="btn btn-sm bg-primary ">
+                            <a href="javascript:void(0)" wire:click="openModalEdit({{ $supplier->id }})" class="btn btn-sm bg-primary ">
                                 <i class="fa fa-edit"></i>
                             </a>
 
-                            <a wire:click="$dispatch('delete', {id : {{ $customer->id }},
-                                eventName:'destroyCustomer'})"
+                            <a wire:click="$dispatch('delete', {id : {{ $supplier->id }},
+                                eventName:'destroySupplier'})"
                                 class="btn btn-sm bg-red">
                                 <i class="fa fa-trash"></i>
                             </a>
@@ -56,10 +56,10 @@
         </x-table>
 
         <x-slot:cardFooter>
-            {{ $customers->links() }}
+            {{ $suppliers->links() }}
         </x-slot:cardFooter>
     </x-card>
 
     {{-- Modal --}}
-    @include('customer.modalCustomer')
+    @include('supplier.modalSupplier')
 </div>

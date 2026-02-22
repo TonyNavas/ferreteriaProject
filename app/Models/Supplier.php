@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Supplier extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'indentity_id',
+        'identity_id',
         'document_number',
         'name',
         'address',
@@ -16,7 +19,7 @@ class Supplier extends Model
     ];
 
     // Relacion uno a muchos inversa
-    public function indentity()
+    public function identity()
     {
         return $this->belongsTo(Identity::class);
     }
@@ -28,7 +31,7 @@ class Supplier extends Model
         return $this->hasMany(PurchaseOrder::class);
     }
 
-    public function purchase()
+    public function purchases()
     {
         return $this->hasMany(Purchase::class);
     }

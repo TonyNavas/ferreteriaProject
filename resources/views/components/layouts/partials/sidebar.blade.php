@@ -1,31 +1,89 @@
 @php
     $links = [
         [
+            'header' => 'Principal',
+        ],
+        [
             'name' => 'Inicio',
             'icon' => 'fa fa-home',
             'href' => route('inicio'),
             'active' => Request::is('inicio') ? 'active' : '',
         ],
         [
-            'header' => 'ADMINISTRAR PAGINA',
+            'header' => 'Inventario',
         ],
         [
-            'name' => 'Categorías',
-            'icon' => 'fas fa-th-large',
-            'href' => route('category.index'),
-            'active' => Request::is('admin/categorias*') ? 'active' : '',
-        ],
-        [
-            'name' => 'Productos',
-            'icon' => 'fas fa-box',
-            'href' => route('product.index'),
-            'active' => Request::is('admin/productos*') ? 'active' : '',
-        ],
+            'name' => 'Inventario',
+            'icon' => 'fas fa-luggage-cart',
+            'active' => false,
+            'submenu' => [
                 [
-            'name' => 'Clientes',
-            'icon' => 'fas fa-users',
-            'href' => route('customer.index'),
-            'active' => Request::is('admin/clientes*') ? 'active' : '',
+                    'name' => 'Categorías',
+                    'icon' => 'fas fa-th-large',
+                    'href' => route('category.index'),
+                    'active' => Request::is('admin/categorias*') ? 'active' : '',
+                ],
+                [
+                    'name' => 'Productos',
+                    'icon' => 'fas fa-box',
+                    'href' => route('product.index'),
+                    'active' => Request::is('admin/productos*') ? 'active' : '',
+                ],
+                [
+                    'name' => 'Almacen',
+                    'icon' => 'fas fa-warehouse',
+                    'href' => route('warehouse.index'),
+                    'active' => Request::is('admin/almacen*') ? 'active' : '',
+                ],
+            ],
+        ],
+
+        [
+            'name' => 'Compras',
+            'icon' => 'fas fa-shopping-cart',
+            'active' => false,
+            'submenu' => [
+                [
+                    'name' => 'Proveedores',
+                    'icon' => 'fas fa-truck',
+                    'href' => route('supplier.index'),
+                    'active' => Request::is('admin/proveedores*') ? 'active' : '',
+                ],
+                [
+                    'name' => 'Ordenes de compra',
+                    'href' => '#',
+                    'active' => false,
+                ],
+                [
+                    'name' => 'Compras',
+                    'href' => '#',
+                    'active' => false,
+                ],
+            ],
+        ],
+
+        [
+            'name' => 'Ventas',
+            'icon' => '',
+            'active' => false,
+            'submenu' => [
+                [
+                    'name' => 'Clientes',
+                    'icon' => 'fas fa-users',
+                    'href' => route('customer.index'),
+                    'active' => Request::is('admin/clientes*') ? 'active' : '',
+                ],
+                [
+                    'name' => 'Cotizaciones',
+                    'href' => '#',
+                    'active' => false,
+                ],
+                [
+                    'name' => 'Ventas',
+                    'href' => '#',
+                    'active' => false,
+                ],
+            ],
         ],
     ];
 @endphp
@@ -69,22 +127,40 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
                 @foreach ($links as $link)
-                    <li class="nav-item">
-
-                        @isset($link['header'])
+                    @isset($link['header'])
                         <li class="nav-header">{{ $link['header'] }}</li>
-                    @else
-                        <a href="{{ $link['href'] }}" class="nav-link {{ $link['active'] }}">
+                        @continue
+                    @endisset
+
+                    <li class="nav-item {{ isset($link['submenu']) && $link['active'] ? 'menu-open' : '' }}">
+
+                        <a href="{{ $link['href'] ?? '#' }}" class="nav-link {{ $link['active'] ? 'active' : '' }}">
                             <i class="nav-icon {{ $link['icon'] }}"></i>
                             <p>
                                 {{ $link['name'] }}
+                                @isset($link['submenu'])
+                                    <i class="right fas fa-angle-left"></i>
+                                @endisset
                             </p>
                         </a>
-                    @endisset
+
+                        @isset($link['submenu'])
+                            <ul class="nav nav-treeview">
+                                @foreach ($link['submenu'] as $item)
+                                    <li class="nav-item">
+                                        <a href="{{ $item['href'] }}"
+                                            class="nav-link {{ $item['active'] ? 'active' : '' }}">
+                                            <i class="{{ $item['icon'] ?? 'far fa-circle nav-icon' }}"></i>
+
+                                            <p>{{ $item['name'] }}</p>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endisset
                     </li>
                 @endforeach
             </ul>
         </nav>
     </div>
-
 </aside>

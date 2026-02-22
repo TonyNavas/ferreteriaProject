@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Livewire\Customer;
+namespace App\Livewire\Supplier;
 
-use App\Models\{Customer, Identity};
+use App\Models\{Identity, Supplier};
 use Livewire\{Component, WithPagination};
 use Livewire\Attributes\{On, Title};
 
-#[Title('Clientes')]
-class CustomerComponent extends Component
+#[Title('Proveedores')]
+class SupplierComponent extends Component
 {
     use WithPagination;
 
@@ -34,28 +34,28 @@ class CustomerComponent extends Component
     {
         $this->Id = 0;
         $this->resetModal();
-        $this->dispatch('open-modal', 'modalCustomer');
+        $this->dispatch('open-modal', 'modalSupplier');
     }
 
-    public function openModalEdit(Customer $customer)
+    public function openModalEdit(Supplier $supplier)
     {
         $this->resetModal();
-        $this->Id = $customer->id;
-        $this->identity_id = $customer->identity_id;
-        $this->document_number = $customer->document_number;
-        $this->name = $customer->name;
-        $this->address = $customer->address;
-        $this->email = $customer->email;
-        $this->phone = $customer->phone;
+        $this->Id = $supplier->id;
+        $this->identity_id = $supplier->identity_id;
+        $this->document_number = $supplier->document_number;
+        $this->name = $supplier->name;
+        $this->address = $supplier->address;
+        $this->email = $supplier->email;
+        $this->phone = $supplier->phone;
 
-        $this->dispatch('open-modal', 'modalCustomer');
+        $this->dispatch('open-modal', 'modalSupplier');
     }
 
-    public function storeCustomer()
+    public function storeSupplier()
     {
         $data = $this->validate([
             'identity_id' => 'required|exists:identities,id',
-            'document_number' => 'required|string|max:20|unique:customers,document_number',
+            'document_number' => 'required|string|max:20|unique:suppliers,document_number',
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'email' => 'nullable|email|max:1000',
@@ -63,23 +63,23 @@ class CustomerComponent extends Component
         ]);
 
         // dd($data);
-        Customer::create($data);
+        Supplier::create($data);
 
         $this->dispatch('swal', [
             'icon' => 'success',
             'title' => '¡Bien hecho!',
-            'text' => 'Cliente creado correctamente!',
+            'text' => 'Proveedor creado correctamente!',
         ]);
 
         $this->resetModal();
-        $this->dispatch('close-modal', 'modalCustomer');
+        $this->dispatch('close-modal', 'modalSupplier');
     }
 
-    public function updateCustomer(Customer $customer)
+    public function updateSupplier(Supplier $supplier)
     {
         $data = $this->validate([
             'identity_id' => 'required|exists:identities,id',
-            'document_number' => 'required|string|max:20|unique:customers,document_number, ' . $customer->id,
+            'document_number' => 'required|string|max:20|unique:suppliers,document_number, ' . $supplier->id,
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'email' => 'nullable|email|max:1000',
@@ -87,32 +87,32 @@ class CustomerComponent extends Component
         ]);
 
         // dd($data);
-        $customer->update($data);
+        $supplier->update($data);
 
         $this->dispatch('swal', [
             'icon' => 'success',
             'title' => '¡Bien hecho!',
-            'text' => 'Cliente creado correctamente!',
+            'text' => 'Proveedor editado correctamente!',
         ]);
 
         $this->resetModal();
-        $this->dispatch('close-modal', 'modalCustomer');
+        $this->dispatch('close-modal', 'modalSupplier');
     }
 
-    #[On('destroyCustomer')]
+    #[On('destroySupplier')]
     public function destroy($id)
     {
-        $customer = Customer::findOrFail($id);
+        $supplier = Supplier::findOrFail($id);
 
-        if ($customer->quotes()->exists() || $customer->sales()->exists()) {
+        if ($supplier->purchaseOrders()->exists() || $supplier->purchases()->exists()) {
             $this->dispatch('swal', [
                 'icon' => 'error',
                 'title' => 'Error!',
-                'text' => 'No se puede eliminar el cliente porque tiene cotizaciones o ventas asociadas!',
+                'text' => 'No se puede eliminar el cliente porque tiene compras o ordenes de compras asociadas!',
             ]);
         }
 
-        $customer->delete();
+        $supplier->delete();
 
         $this->dispatch('swal', [
             'icon' => 'success',
@@ -126,12 +126,12 @@ class CustomerComponent extends Component
         if ($this->search != '') {
             $this->resetPage();
         }
-        $customers = Customer::where('name', 'LIKE', '%' . $this->search . '%')
+        $suppliers = Supplier::where('name', 'LIKE', '%' . $this->search . '%')
             ->orderBy('id', 'desc')
             ->paginate($this->pagination);
 
         $identities = Identity::all();
 
-        return view('livewire.customer.customer-component', compact('customers', 'identities'));
+        return view('livewire.supplier.supplier-component', compact('suppliers', 'identities'));
     }
 }
