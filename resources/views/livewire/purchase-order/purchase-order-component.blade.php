@@ -5,7 +5,7 @@
 
         </x-slot:cardTools>
 
-        <div class="card">
+        <div class="card bg-light shadow-none">
             <div class="card-body">
                 <form wire:submit="save">
                     <div class="row">
