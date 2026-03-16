@@ -15,7 +15,7 @@
         [
             'name' => 'Inventario',
             'icon' => 'fas fa-luggage-cart',
-            'active' => false,
+            'active' => Request::is('admin/categorias*') || Request::is('admin/productos*') || Request::is('admin/almacen*'),
             'submenu' => [
                 [
                     'name' => 'Categorías',
@@ -41,7 +41,7 @@
         [
             'name' => 'Compras',
             'icon' => 'fas fa-shopping-cart',
-            'active' => false,
+            'active' =>  Request::is('admin/proveedores*') || Request::is('admin/ordenes-compra*') || Request::is('admin/compras*'),
             'submenu' => [
                 [
                     'name' => 'Proveedores',
@@ -51,11 +51,13 @@
                 ],
                 [
                     'name' => 'Ordenes de compra',
-                    'href' => '#',
-                    'active' => false,
+                    'icon' => 'fas fa-clipboard-list',
+                    'href' => route('purchaseorder.index'),
+                    'active' => Request::is('admin/ordenes-compra*') ? 'active' : '',
                 ],
                 [
                     'name' => 'Compras',
+                    'icon' => 'fas fa-dolly',
                     'href' => '#',
                     'active' => false,
                 ],
@@ -64,7 +66,7 @@
 
         [
             'name' => 'Ventas',
-            'icon' => '',
+            'icon' => 'fas fa-cash-register',
             'active' => false,
             'submenu' => [
                 [
@@ -85,16 +87,77 @@
                 ],
             ],
         ],
+
+        [
+            'name' => 'Movimientos',
+            'icon' => 'fas fa-random',
+            'active' => false,
+            'submenu' => [
+                [
+                    'name' => 'Entradas y salidas',
+                    'href' => '#',
+                    'active' => false,
+                ],
+                [
+                    'name' => 'Transferencias',
+                    'href' => '#',
+                    'active' => false,
+                ],
+            ],
+        ],
+
+        [
+            'name' => 'Reportes',
+            'icon' => 'fas fa-chart-line',
+            'active' => false,
+            'submenu' => [
+                [
+                    'name' => 'Entradas y salidas',
+                    'href' => '#',
+                    'active' => false,
+                ],
+                [
+                    'name' => 'Transferencias',
+                    'href' => '#',
+                    'active' => false,
+                ],
+            ],
+        ],
+
+        [
+            'header' => 'Configuracion',
+        ],
+
+        [
+            'name' => 'Usuarios',
+            'icon' => 'fas fa-users',
+            'href' => '#',
+            'active' => false,
+        ],
+
+        [
+            'name' => 'Roles y permisos',
+            'icon' => 'fas fa-user-shield',
+            'href' => '#',
+            'active' => false,
+        ],
+
+        [
+            'name' => 'Ajustes',
+            'icon' => 'fas fa-cogs',
+            'href' => '#',
+            'active' => false,
+        ],
     ];
 @endphp
 
 
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar sidebar-light-primary elevation-1">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link">
         <img src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
             style="opacity: .8">
-        <span class="brand-text font-weight-light">Ferreteria</span>
+        <span class="brand-text font-weight-light">FerreteriaVictoria</span>
     </a>
 
     <!-- Sidebar -->

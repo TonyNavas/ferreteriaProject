@@ -31,18 +31,16 @@
                     <td>{{$supplier->phone}}</td>
                     <td>
                         <div class="btn-group">
-                            <a a href="javascript:void(0)" class="btn btn-sm bg-dark">
-                                <i class="fa fa-eye"></i>
-                            </a>
-
                             <a href="javascript:void(0)" wire:click="openModalEdit({{ $supplier->id }})" class="btn btn-sm bg-primary ">
                                 <i class="fa fa-edit"></i>
+                                Editar
                             </a>
 
                             <a wire:click="$dispatch('delete', {id : {{ $supplier->id }},
                                 eventName:'destroySupplier'})"
                                 class="btn btn-sm bg-red">
                                 <i class="fa fa-trash"></i>
+                                Eliminar
                             </a>
 
                         </div>
