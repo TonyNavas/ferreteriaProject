@@ -16,6 +16,10 @@ class PurchaseOrder extends Model
         'observation'
     ];
 
+    protected $casts = [
+        'date' => 'datetime',
+    ];
+
     // Relacion uno a muchos inversa
 
     public function supplier(){
@@ -24,10 +28,10 @@ class PurchaseOrder extends Model
 
     // Relacion muchos a muchos polimorfica
 
-    public function products()
-    {
-        return $this->morphToMany(Product::class, 'productable_id')
-            ->withPivot('quantity', 'price', 'subtotal')
-            ->withTimestamps();
-    }
+public function products()
+{
+    return $this->morphToMany(Product::class, 'productable')
+        ->withPivot('quantity', 'price', 'subtotal')
+        ->withTimestamps();
+}
 }

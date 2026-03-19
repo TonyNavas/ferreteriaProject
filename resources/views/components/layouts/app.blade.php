@@ -9,6 +9,8 @@
 
     @include('components.layouts.partials.styles')
 
+    {{-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
+    @livewireStyles
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
@@ -77,6 +79,8 @@
                 });
             })
         </script>
+
+        @livewireScripts
 </body>
 
 </html>

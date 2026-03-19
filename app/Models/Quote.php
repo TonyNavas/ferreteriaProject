@@ -27,7 +27,7 @@ class Quote extends Model
 
     public function products()
     {
-        return $this->morphToMany(Product::class, 'productable_id')
+        return $this->morphToMany(Product::class, 'productable')
             ->withPivot('quantity', 'price', 'subtotal')
             ->withTimestamps();
     }
