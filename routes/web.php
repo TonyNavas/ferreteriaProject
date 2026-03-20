@@ -5,6 +5,7 @@ use App\Livewire\Category\CategoryComponent;
 use App\Livewire\Customer\CustomerComponent;
 use App\Livewire\Home\Inicio;
 use App\Livewire\Product\ProductComponent;
+use App\Livewire\Purchase\PurchaseComponent;
 use App\Livewire\PurchaseOrder\PurchaseOrderComponent;
 use App\Livewire\Supplier\SupplierComponent;
 use App\Livewire\Warehouse\WarehouseComponent;
@@ -30,3 +31,6 @@ Route::get('/admin/almacen', WarehouseComponent::class)->name('warehouse.index')
 
 // Ordenes de compra
 Route::get('/admin/ordenes-compra', PurchaseOrderComponent::class)->name('purchaseorder.index');
+
+// Compras
+Route::get('/admin/compras', PurchaseComponent::class)->name('purchase.index');

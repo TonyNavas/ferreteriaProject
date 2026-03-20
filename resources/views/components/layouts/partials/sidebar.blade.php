@@ -58,8 +58,8 @@
                 [
                     'name' => 'Compras',
                     'icon' => 'fas fa-dolly',
-                    'href' => '#',
-                    'active' => false,
+                    'href' => route('purchase.index'),
+                    'active' => Request::is('admin/compras*') ? 'active' : '',
                 ],
             ],
         ],
