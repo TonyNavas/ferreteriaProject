@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('correlative');
             $table->timestamp('date')->useCurrent();
 
-            $table->foreignId('purchase_order_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('purchase_order_id')->nullable()->constrained()->onDelete('set null');
 
             $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
 

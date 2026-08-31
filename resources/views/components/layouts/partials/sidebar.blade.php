@@ -5,7 +5,7 @@
         ],
         [
             'name' => 'Inicio',
-            'icon' => 'fa fa-home',
+            'icon' => 'fa fa-home nav-icon',
             'href' => route('inicio'),
             'active' => Request::is('inicio') ? 'active' : '',
         ],
@@ -14,24 +14,25 @@
         ],
         [
             'name' => 'Inventario',
-            'icon' => 'fas fa-luggage-cart',
-            'active' => Request::is('admin/categorias*') || Request::is('admin/productos*') || Request::is('admin/almacen*'),
+            'icon' => 'fas fa-luggage-cart nav-icon',
+            'active' => Request::is('admin/categorias*') || Request::is('admin/productos*') || Request::is('admin/almacen*') || Request::is('admin/products/*/kardex'),
             'submenu' => [
                 [
                     'name' => 'Categorías',
-                    'icon' => 'fas fa-th-large',
+                    'icon' => 'fas fa-th-large nav-icon',
                     'href' => route('category.index'),
                     'active' => Request::is('admin/categorias*') ? 'active' : '',
                 ],
                 [
                     'name' => 'Productos',
-                    'icon' => 'fas fa-box',
+                    'icon' => 'fas fa-box nav-icon',
                     'href' => route('product.index'),
-                    'active' => Request::is('admin/productos*') ? 'active' : '',
+                    'active' => Request::is('admin/productos*') || Request::is('admin/products/*/kardex') ? 'active' : '',
+                    
                 ],
                 [
                     'name' => 'Almacen',
-                    'icon' => 'fas fa-warehouse',
+                    'icon' => 'fas fa-warehouse nav-icon',
                     'href' => route('warehouse.index'),
                     'active' => Request::is('admin/almacen*') ? 'active' : '',
                 ],
@@ -40,24 +41,24 @@
 
         [
             'name' => 'Compras',
-            'icon' => 'fas fa-shopping-cart',
+            'icon' => 'fas fa-shopping-cart nav-icon',
             'active' =>  Request::is('admin/proveedores*') || Request::is('admin/ordenes-compra*') || Request::is('admin/compras*'),
             'submenu' => [
                 [
                     'name' => 'Proveedores',
-                    'icon' => 'fas fa-truck',
+                    'icon' => 'fas fa-truck nav-icon',
                     'href' => route('supplier.index'),
                     'active' => Request::is('admin/proveedores*') ? 'active' : '',
                 ],
                 [
                     'name' => 'Ordenes de compra',
-                    'icon' => 'fas fa-clipboard-list',
+                    'icon' => 'fas fa-clipboard-list nav-icon',
                     'href' => route('purchaseorder.index'),
                     'active' => Request::is('admin/ordenes-compra*') ? 'active' : '',
                 ],
                 [
                     'name' => 'Compras',
-                    'icon' => 'fas fa-dolly',
+                    'icon' => 'fas fa-cart-plus nav-icon',
                     'href' => route('purchase.index'),
                     'active' => Request::is('admin/compras*') ? 'active' : '',
                 ],
@@ -66,42 +67,46 @@
 
         [
             'name' => 'Ventas',
-            'icon' => 'fas fa-cash-register',
-            'active' => false,
+            'icon' => 'fas fa-cash-register nav-icon',
+            'active' => Request::is('admin/clientes*') || Request::is('admin/cotizaciones*') || Request::is('admin/ventas*'),
             'submenu' => [
                 [
                     'name' => 'Clientes',
-                    'icon' => 'fas fa-users',
+                    'icon' => 'fas fa-users nav-icon',
                     'href' => route('customer.index'),
                     'active' => Request::is('admin/clientes*') ? 'active' : '',
                 ],
                 [
                     'name' => 'Cotizaciones',
-                    'href' => '#',
-                    'active' => false,
+                    'icon' => 'fas fa-file-invoice-dollar nav-icon',
+                    'href' => route('quote.index'),
+                    'active' => Request::is('admin/cotizaciones*') ? 'active' : '',
                 ],
                 [
                     'name' => 'Ventas',
-                    'href' => '#',
-                    'active' => false,
+                    'icon' => 'fas fa-shopping-cart nav-icon',
+                    'href' => route('sale.index'),
+                    'active' => Request::is('admin/ventas*') ? 'active' : '',
                 ],
             ],
         ],
 
         [
             'name' => 'Movimientos',
-            'icon' => 'fas fa-random',
-            'active' => false,
+            'icon' => 'fas fa-random nav-icon',
+            'active' => Request::is('admin/movimientos*') || Request::is('admin/transferencias*'),
             'submenu' => [
                 [
                     'name' => 'Entradas y salidas',
-                    'href' => '#',
-                    'active' => false,
+                    'icon' => 'fas fa-box-open nav-icon',
+                    'href' => route('movement.index'),
+                    'active' => Request::is('admin/movimientos*') ? 'active' : '',
                 ],
                 [
                     'name' => 'Transferencias',
-                    'href' => '#',
-                    'active' => false,
+                    'icon' => 'fas fa-dolly nav-icon nav-icon',
+                    'href' => route('transfer.index'),
+                    'active' => Request::is('admin/transferencias*') ? 'active' : '',
                 ],
             ],
         ],
@@ -152,10 +157,10 @@
 @endphp
 
 
-<aside class="main-sidebar sidebar-light-primary elevation-1">
+<aside class="main-sidebar sidebar-dark-primary elevation-1">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
-        <img src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+    <a href="{{route('inicio')}}" class="brand-link" style="background-color: #0f172a;">
+        <img src="{{ asset('dist/img/logoprueba.png') }}" alt="Logo" class="brand-image img-circle elevation-0"
             style="opacity: .8">
         <span class="brand-text font-weight-light">FerreteriaVictoria</span>
     </a>
@@ -165,7 +170,7 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
+                <img src="{{ asset('dist/img/logoprueba.png') }}" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
                 <a href="#" class="d-block">Alexander Pierce</a>
@@ -227,3 +232,21 @@
         </nav>
     </div>
 </aside>
+
+<style>
+    .main-sidebar {
+    background: #0f172a !important;
+    border-right: 1px solid rgba(255,255,255,.05);
+}
+
+.brand-link {
+    border-bottom: 1px solid rgba(255,255,255,.05) !important;
+    padding: 1rem .8rem;
+}
+
+.brand-text {
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 1rem;
+}
+</style>

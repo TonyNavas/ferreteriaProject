@@ -37,4 +37,10 @@ class Purchase extends Model
             ->withPivot('quantity', 'price', 'subtotal')
             ->withTimestamps();
     }
+
+    // Relacion uno a muchos plimorfica
+
+    public function inventories(){
+        return $this->morphMany(Inventory::class, 'inventoryable');
+    }
 }

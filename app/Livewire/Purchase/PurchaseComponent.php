@@ -2,9 +2,12 @@
 
 namespace App\Livewire\Purchase;
 
+use App\Facades\Kardex;
+use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseOrder;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -29,51 +32,93 @@ class PurchaseComponent extends Component
 
 
     public function updated($property, $value)
-{
-    if ($property == 'purchase_order_id') {
+    {
+        if ($property == 'purchase_order_id') {
 
-        $purchaseOrder = PurchaseOrder::find($value);
+            $purchaseOrder = PurchaseOrder::find($value);
 
-        if ($purchaseOrder) {
+            if ($purchaseOrder) {
 
-            $this->voucher_type = $purchaseOrder->voucher_type;
-            $this->supplier_id = $purchaseOrder->supplier_id;
+                $this->voucher_type = $purchaseOrder->voucher_type;
+                $this->supplier_id = $purchaseOrder->supplier_id;
 
-            $this->dispatch('set-supplier',
-                id: $this->supplier_id,
-                text: $purchaseOrder->supplier->name // mejor así
-            );
+                $this->dispatch(
+                    'set-supplier',
+                    id: $this->supplier_id,
+                    text: $purchaseOrder->supplier->name // mejor así
+                );
 
-            $this->products = $purchaseOrder->products->map(function ($product){
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'quantity' => $product->pivot->quantity,
-                    'price' => $product->pivot->price,
-                    'subtotal' => $product->pivot->subtotal,
-                ];
-            })->toArray();
+                $this->products = $purchaseOrder->products->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'quantity' => $product->pivot->quantity,
+                        'price' => $product->pivot->price,
+                        'subtotal' => $product->pivot->subtotal,
+                    ];
+                })->toArray();
+            }
         }
     }
-}
 
     public function addProduct()
     {
-        $this->validate([
-            'product_id' => 'required',
-        ]);
+        try {
+            $this->validate([
+                'product_id' => 'required|exists:products,id',
+                'warehouse_id' => 'required|exists:warehouses,id',
+            ], [], [
+                'product_id' => 'producto',
+                'warehouse_id' => 'almacén',
+            ]);
 
-        $product = Product::find($this->product_id);
+            $existing = collect($this->products)->firstWhere('id', $this->product_id);
 
-        $this->products[] = [
-            'id' => $product->id,
-            'name' => $product->name,
-            'quantity' => 1,
-            'price' => 0,
-            'subtotal' => 0,
-        ];
+            if ($existing) {
+                $this->dispatch('swal', [
+                    'icon' => 'warning',
+                    'title' => '¡Producto ya agregado!',
+                    'text' => 'El producto ya se encuentra en la lista!',
+                ]);
 
-        $this->reset('product_id');
+                return;
+            }
+
+            $product = Product::find($this->product_id);
+
+            $lastRecord = Kardex::getLastRecord(
+                $product->id,
+                $this->warehouse_id,
+            );
+
+            $this->products[] = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'quantity' => 1,
+                'price' => $lastRecord['cost'],
+                'subtotal' => $lastRecord['cost'],
+            ];
+
+            $this->reset('product_id');
+        } catch (ValidationException $e) {
+
+            $errors = collect($e->errors())
+                ->flatten()
+                ->implode("\n");
+
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Errores de validación',
+                'text' => $errors,
+            ]);
+        } catch (\Exception $e) {
+
+            $this->dispatch('swal', [
+                'icon' => 'error',
+                'title' => 'Error',
+                'text' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function removeProduct($index)
@@ -100,7 +145,7 @@ class PurchaseComponent extends Component
             'products.*.price' => 'required|numeric:min:0',
         ]);
 
-        $Purchase = Purchase::create([
+        $purchase = Purchase::create([
             'voucher_type' => $this->voucher_type,
             'serie' => $this->serie,
             'correlative' => $this->correlative,
@@ -113,11 +158,14 @@ class PurchaseComponent extends Component
         ]);
 
         foreach ($this->products as $product) {
-            $Purchase->products()->attach($product['id'], [
+            $purchase->products()->attach($product['id'], [
                 'quantity' => $product['quantity'],
                 'price' => $product['price'],
                 'subtotal' => $product['quantity'] * $product['price'],
             ]);
+
+            // Kardex
+            Kardex::registerEntry($purchase, $product, $this->warehouse_id, 'Compra');
         }
 
         $this->dispatch('swal', [

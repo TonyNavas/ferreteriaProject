@@ -18,7 +18,7 @@
                 this.total = total;
     
                 // Deshabilitar almacén si hay productos
-                $('#warehouse')
+                $('#origin_warehouse')
                     .prop('disabled', newProducts.length > 0)
                     .trigger('change.select2');
             });
@@ -27,7 +27,7 @@
 
         <div class="container-fluid">
 
-            <x-card cardTitle="Ordenes de compra">
+            <x-card cardTitle="Transferencias">
                 <x-slot:cardTools>
 
                 </x-slot:cardTools>
@@ -35,26 +35,19 @@
                 <div class="card bg-light shadow-none">
                     <div class="card-body">
                         <form wire:submit="save">
+                            {{-- {{$type}} --}}
                             <div class="row">
-
-                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-2">
-                                    <label for="voucher_type">Tipo de comprobante</label>
-                                    <select wire:model='voucher_type' id="voucher_type" class="custom-select w-100">
-                                        <option value="1">Factura</option>
-                                        <option value="2">Boleta</option>
-                                    </select>
-                                </div>
 
                                 <div class="form-group col-12 col-sm-6 col-md-4 col-lg-2">
                                     <label for="serie">Serie</label>
                                     <input wire:model='serie' type="text" class="form-control w-100"
-                                        placeholder="Serie del comprobante" id="serie">
+                                        placeholder="Serie del comprobante" id="serie" readonly>
                                 </div>
 
                                 <div class="form-group col-12 col-sm-6 col-md-4 col-lg-2">
                                     <label for="correlative">Correlativo</label>
                                     <input wire:model='correlative' type="text" class="form-control w-100"
-                                        placeholder="Correlativo del comprobante">
+                                        placeholder="Correlativo del comprobante" readonly>
                                 </div>
 
                                 <div class="form-group col-12 col-sm-6 col-md-4 col-lg-2">
@@ -62,44 +55,40 @@
                                     <input wire:model='date' type="date" class="form-control w-100" id="date">
                                 </div>
 
-                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-4">
-
+                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-3">
                                     <div wire:ignore>
-                                        <label>Orden de compra</label>
-                                        <select id="purchaseOrder" class="form-control">
-                                            <option>Seleccionar orden de compra</option>
+                                        <label>Almacen origen</label>
+                                        <select id="origin_warehouse" class="form-control">
+                                            <option>Seleccionar almacen</option>
                                         </select>
                                     </div>
                                 </div>
 
+                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-3">
+                                    <div wire:ignore>
+                                        <label>Almacen destino</label>
+                                        <select id="destination_warehouse" class="form-control">
+                                            <option>Seleccionar almacen</option>
+                                        </select>
+                                    </div>
+                                </div>
 
                             </div>
 
                             <div class="row">
                                 <div class="col-12 col-lg-6">
-                                    {{-- {{ $supplier_id }} --}}
-                                    {{-- Select2 --}}
-                                    <div wire:ignore>
-                                        <label>Proveedor</label>
-                                        <select id="supplier" class="form-control">
-                                            <option>Seleccionar proveedor</option>
-                                        </select>
-                                    </div>
                                 </div>
 
-                                <div class="col-12 col-lg-6">
-
-                                    {{-- Select2 --}}
+                                {{-- <div class="col-12 col-lg-6">
                                     <div wire:ignore>
-                                        <label>Almacenes</label>
-                                        <select id="warehouse" class="form-control">
-                                            <option>Seleccionar almacen</option>
+                                        <label>Motivo de traslado/movimiento</label>
+                                        <select id="reason" class="form-control">
+                                            <option value=""></option>
                                         </select>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
 
-                            {{ $product_id }}
                             {{-- Select2 product --}}
                             <div class="d-flex align-items-end gap-2 mt-1">
 
@@ -108,7 +97,6 @@
                                     <select id="product" class="form-control w-100">
                                         <option>Seleccionar producto</option>
                                     </select>
-
                                 </div>
                                 <div>
                                     <button type="button" wire:click="addProduct" class="btn btn-primary ml-2">
@@ -193,7 +181,7 @@
                 </x-slot:cardFooter>
             </x-card>
 
-            <x-card cardTitle="Listado de ordenes de compra">
+            <x-card cardTitle="Listado de transferencias">
                 <x-slot:cardTools>
 
                 </x-slot:cardTools>
@@ -205,21 +193,21 @@
                             <th width="3%">Fecha</th>
                             <th width="3%">Serie</th>
                             <th width="3%">Correlativo</th>
-                            <th width="3%">Document NUM</th>
-                            <th width="3%">Proveedor</th>
+                            <th width="3%">Almacén Origen</th>
+                            <th width="3%">Almacén Destino</th>
                             <th width="3%">Total</th>
                             <th width="3%">Acciones</th>
                         </x-slot:thead>
 
-                        @forelse ($purchases as $index => $purchases)
+                        @forelse ($transfers as $index => $transfer)
                             <tr wire:key="Purchase-{{ $index }}" class="text-center">
-                                <td>{{ $purchases->id }}</td>
-                                <td>{{ $purchases->date->format('Y-m-d') }}</td>
-                                <td>{{ $purchases->serie }}</td>
-                                <td>{{ $purchases->correlative }}</td>
-                                <td>{{ $purchases->supplier->document_number }}</td>
-                                <td>{{ $purchases->supplier->name }}</td>
-                                <td>C${{ number_format($purchases->total, 2) }}</td>
+                                <td>{{ $transfer->id }}</td>
+                                <td>{{ $transfer->date->format('Y-m-d') }}</td>
+                                <td>{{ $transfer->serie }}</td>
+                                <td>{{ $transfer->correlative }}</td>
+                                <td>{{ $transfer->originWarehouse->name }}</td>
+                                <td>{{ $transfer->destinationWarehouse->name }}</td>
+                                <td>{{ $transfer->total }}</td>
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn btn-sm bg-purple">
@@ -252,60 +240,8 @@
         @section('js')
             <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-            <script>
-                document.addEventListener('livewire:init', () => {
 
-                    $('#supplier').select2({
-                        width: '100%',
-                        ajax: {
-                            url: "{{ route('api.suppliers.index') }}",
-                            type: 'POST',
-                            dataType: 'json',
-                            delay: 250,
-                            data: params => ({
-                                search: params.term
-                            }),
-                            processResults: data => ({
-                                results: data
-                            })
-                        }
-                    });
-
-                    $('#supplier').on('change', function() {
-                        @this.set('supplier_id', $(this).val());
-                    });
-
-                    // Escuchando evento para actualizar el select del proveedor
-                    Livewire.on('set-supplier', (data) => {
-
-                        let id = data.id;
-
-                        // Crear opción manualmente si no existe
-                        let option = new Option("Cargando...", id, true, true);
-                        $('#supplier').append(option).trigger('change');
-
-                        // Opcional: traer el nombre real del supplier
-                        $.ajax({
-                            url: "{{ route('api.suppliers.index') }}",
-                            type: 'POST',
-                            data: {
-                                selected: [id]
-                            },
-                            success: function(response) {
-                                let supplier = response[0];
-
-                                if (supplier) {
-                                    let option = new Option(supplier.text, supplier.id, true, true);
-                                    $('#supplier').empty().append(option).trigger('change');
-                                }
-                            }
-                        });
-
-                    });
-
-                });
-            </script>
-
+            {{-- Productos --}}
             <script>
                 document.addEventListener('livewire:init', () => {
 
@@ -339,43 +275,11 @@
                 });
             </script>
 
+            {{-- Origen --}}
             <script>
                 document.addEventListener('livewire:init', () => {
 
-                    $('#purchaseOrder').select2({
-                        width: '100%',
-                        ajax: {
-                            url: "{{ route('api.purchase-order.index') }}",
-                            type: 'POST',
-                            dataType: 'json',
-                            delay: 250,
-
-                            data: function(params) {
-                                return {
-                                    search: params.term
-                                };
-                            },
-
-                            processResults: function(data) {
-                                return {
-                                    results: data
-                                };
-                            }
-                        }
-                    });
-
-                    $('#purchaseOrder').on('change', function() {
-                        let value = $(this).val();
-                        @this.set('purchase_order_id', value);
-                    });
-
-                });
-            </script>
-
-            <script>
-                document.addEventListener('livewire:init', () => {
-
-                    $('#warehouse').select2({
+                    $('#origin_warehouse').select2({
                         width: '100%',
                         ajax: {
                             url: "{{ route('api.warehouses.index') }}",
@@ -397,9 +301,43 @@
                         }
                     });
 
-                    $('#warehouse').on('change', function() {
+                    $('#origin_warehouse').on('change', function() {
                         let value = $(this).val();
-                        @this.set('warehouse_id', value);
+                        @this.set('origin_warehouse_id', value);
+                    });
+
+                });
+            </script>
+
+            {{-- Destino --}}
+            <script>
+                document.addEventListener('livewire:init', () => {
+
+                    $('#destination_warehouse').select2({
+                        width: '100%',
+                        ajax: {
+                            url: "{{ route('api.warehouses.index') }}",
+                            type: 'POST',
+                            dataType: 'json',
+                            delay: 250,
+
+                            data: function(params) {
+                                return {
+                                    search: params.term
+                                };
+                            },
+
+                            processResults: function(data) {
+                                return {
+                                    results: data
+                                };
+                            }
+                        }
+                    });
+
+                    $('#destination_warehouse').on('change', function() {
+                        let value = $(this).val();
+                        @this.set('destination_warehouse_id', value);
                     });
 
                 });

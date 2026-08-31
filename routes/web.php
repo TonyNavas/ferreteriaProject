@@ -1,14 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\{Auth, Route};
 use App\Livewire\Category\CategoryComponent;
 use App\Livewire\Customer\CustomerComponent;
 use App\Livewire\Home\Inicio;
+use App\Livewire\Kardex\KardexComponent;
+use App\Livewire\Movement\MovementComponent;
 use App\Livewire\Product\ProductComponent;
 use App\Livewire\Purchase\PurchaseComponent;
 use App\Livewire\PurchaseOrder\PurchaseOrderComponent;
+use App\Livewire\Quote\QuoteComponent;
+use App\Livewire\Sale\SaleComponent;
 use App\Livewire\Supplier\SupplierComponent;
+use App\Livewire\Transfer\TransferComponent;
 use App\Livewire\Warehouse\WarehouseComponent;
+use Illuminate\Support\Facades\{Auth, Route};
 
 Route::get('/', function () {
     return view('welcome');
@@ -34,3 +39,13 @@ Route::get('/admin/ordenes-compra', PurchaseOrderComponent::class)->name('purcha
 
 // Compras
 Route::get('/admin/compras', PurchaseComponent::class)->name('purchase.index');
+
+Route::get('/admin/cotizaciones', QuoteComponent::class)->name('quote.index');
+
+Route::get('/admin/ventas', SaleComponent::class)->name('sale.index');
+
+Route::get('admin/movimientos', MovementComponent::class)->name('movement.index');
+
+Route::get('admin/transferencias', TransferComponent::class)->name('transfer.index');
+
+Route::get('admin/products/{product}/kardex', KardexComponent::class)->name('products.kardex');

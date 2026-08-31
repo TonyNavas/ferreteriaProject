@@ -1,33 +1,28 @@
     <div x-data="{
         products: @entangle('products').live,
-    
+
         total: @entangle('total'),
-    
+
         removeProduct(index) {
             this.products.splice(index, 1);
         },
-    
+
         init() {
             this.$watch('products', (newProducts) => {
                 let total = 0;
-    
+
                 newProducts.forEach(product => {
                     total += product.quantity * product.price;
                 });
-    
+
                 this.total = total;
-    
-                // Deshabilitar almacén si hay productos
-                $('#warehouse')
-                    .prop('disabled', newProducts.length > 0)
-                    .trigger('change.select2');
             });
         }
     }">
 
         <div class="container-fluid">
 
-            <x-card cardTitle="Ordenes de compra">
+            <x-card cardTitle="Cotizaciones">
                 <x-slot:cardTools>
 
                 </x-slot:cardTools>
@@ -37,7 +32,7 @@
                         <form wire:submit="save">
                             <div class="row">
 
-                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-2">
+                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-3">
                                     <label for="voucher_type">Tipo de comprobante</label>
                                     <select wire:model='voucher_type' id="voucher_type" class="custom-select w-100">
                                         <option value="1">Factura</option>
@@ -45,55 +40,33 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-2">
+                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-3">
                                     <label for="serie">Serie</label>
                                     <input wire:model='serie' type="text" class="form-control w-100"
-                                        placeholder="Serie del comprobante" id="serie">
+                                        placeholder="Serie del comprobante" id="serie" readonly>
                                 </div>
 
-                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-2">
+                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-3">
                                     <label for="correlative">Correlativo</label>
                                     <input wire:model='correlative' type="text" class="form-control w-100"
-                                        placeholder="Correlativo del comprobante">
+                                        placeholder="Correlativo del comprobante" readonly>
                                 </div>
 
-                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-2">
+                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-3">
                                     <label for="date">Fecha</label>
                                     <input wire:model='date' type="date" class="form-control w-100" id="date">
                                 </div>
 
-                                <div class="form-group col-12 col-sm-6 col-md-4 col-lg-4">
-
-                                    <div wire:ignore>
-                                        <label>Orden de compra</label>
-                                        <select id="purchaseOrder" class="form-control">
-                                            <option>Seleccionar orden de compra</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-
                             </div>
 
                             <div class="row">
-                                <div class="col-12 col-lg-6">
-                                    {{-- {{ $supplier_id }} --}}
+                                <div class="col-12 col-lg-12">
+                                    {{ $customer_id }}
                                     {{-- Select2 --}}
                                     <div wire:ignore>
-                                        <label>Proveedor</label>
-                                        <select id="supplier" class="form-control">
-                                            <option>Seleccionar proveedor</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-12 col-lg-6">
-
-                                    {{-- Select2 --}}
-                                    <div wire:ignore>
-                                        <label>Almacenes</label>
-                                        <select id="warehouse" class="form-control">
-                                            <option>Seleccionar almacen</option>
+                                        <label>Cliente</label>
+                                        <select id="customer" class="form-control">
+                                            <option>Seleccione un cliente</option>
                                         </select>
                                     </div>
                                 </div>
@@ -206,20 +179,20 @@
                             <th width="3%">Serie</th>
                             <th width="3%">Correlativo</th>
                             <th width="3%">Document NUM</th>
-                            <th width="3%">Proveedor</th>
+                            <th width="3%">Cliente</th>
                             <th width="3%">Total</th>
                             <th width="3%">Acciones</th>
                         </x-slot:thead>
 
-                        @forelse ($purchases as $index => $purchases)
+                        @forelse ($quotes as $index => $quote)
                             <tr wire:key="Purchase-{{ $index }}" class="text-center">
-                                <td>{{ $purchases->id }}</td>
-                                <td>{{ $purchases->date->format('Y-m-d') }}</td>
-                                <td>{{ $purchases->serie }}</td>
-                                <td>{{ $purchases->correlative }}</td>
-                                <td>{{ $purchases->supplier->document_number }}</td>
-                                <td>{{ $purchases->supplier->name }}</td>
-                                <td>C${{ number_format($purchases->total, 2) }}</td>
+                                <td>{{ $quote->id }}</td>
+                                <td>{{ $quote->date->format('Y-m-d') }}</td>
+                                <td>{{ $quote->serie}}</td>
+                                <td>{{ $quote->correlative }}</td>
+                                <td>{{ $quote->customer->document_number}}</td>
+                                <td>{{ $quote->customer->name}}</td>
+                                <td>C${{ number_format($quote->total, 2) }}</td>
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn btn-sm bg-purple">
@@ -255,10 +228,10 @@
             <script>
                 document.addEventListener('livewire:init', () => {
 
-                    $('#supplier').select2({
+                    $('#customer').select2({
                         width: '100%',
                         ajax: {
-                            url: "{{ route('api.suppliers.index') }}",
+                            url: "{{ route('api.customers.index') }}",
                             type: 'POST',
                             dataType: 'json',
                             delay: 250,
@@ -271,32 +244,32 @@
                         }
                     });
 
-                    $('#supplier').on('change', function() {
-                        @this.set('supplier_id', $(this).val());
+                    $('#customer').on('change', function() {
+                        @this.set('customer_id', $(this).val());
                     });
 
                     // Escuchando evento para actualizar el select del proveedor
-                    Livewire.on('set-supplier', (data) => {
+                    Livewire.on('set-customer', (data) => {
 
                         let id = data.id;
 
                         // Crear opción manualmente si no existe
                         let option = new Option("Cargando...", id, true, true);
-                        $('#supplier').append(option).trigger('change');
+                        $('#customer').append(option).trigger('change');
 
                         // Opcional: traer el nombre real del supplier
                         $.ajax({
-                            url: "{{ route('api.suppliers.index') }}",
+                            url: "{{ route('api.customers.index') }}",
                             type: 'POST',
                             data: {
                                 selected: [id]
                             },
                             success: function(response) {
-                                let supplier = response[0];
+                                let customer = response[0];
 
-                                if (supplier) {
-                                    let option = new Option(supplier.text, supplier.id, true, true);
-                                    $('#supplier').empty().append(option).trigger('change');
+                                if (customer) {
+                                    let option = new Option(customer.text, customer.id, true, true);
+                                    $('#customer').empty().append(option).trigger('change');
                                 }
                             }
                         });

@@ -3,7 +3,8 @@
 namespace App\Livewire\Product;
 
 use Illuminate\Support\Facades\Storage;
-use App\Models\{Category, Product};
+use App\Models\{Category, Inventory, Product};
+use Illuminate\Support\Facades\DB;
 use Livewire\{Component, WithFileUploads, WithPagination};
 use Livewire\Attributes\{On, Title};
 
@@ -21,6 +22,10 @@ class ProductComponent extends Component
     public $ProductsCount = 0, $search = '', $Id;
     public $pagination = 10;
 
+    // Propiedades del stock por almacen
+
+    public $inventories = [];
+
     public function resetModal()
     {
         $this->reset(['name']);
@@ -36,6 +41,22 @@ class ProductComponent extends Component
         $this->Id = 0;
         $this->resetModal();
         $this->dispatch('open-modal', 'modalProduct');
+    }
+
+    public function showStock($productId)
+    {
+        $this->Id = 0;
+        $this->dispatch('open-modal', 'modalStock');
+
+        $latestInventories = Inventory::where('product_id', $productId)
+            ->select('warehouse_id', DB::raw('MAX(id) as id'))
+            ->groupBy('warehouse_id')
+            ->pluck('id');
+
+        $this->inventories = Inventory::whereIn('id', $latestInventories)
+        ->with(['warehouse'])
+        ->get();
+
     }
 
     public function storeProduct()

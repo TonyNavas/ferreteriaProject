@@ -8,15 +8,12 @@
             <option value="100">100</option>
         </select>
     </div>
-    <div>
-        <input type="text" wire:model.live = "search" class="form-control" placeholder="Buscar...">
-    </div>
 
 </div>
 
 <div class="table-responsive">
-    <table class="table table-sm table-striped table-bordered table-hover text-center rounded overflow-hidden">
-        <thead class="thead-theme">
+    <table class="table table-sm table-hover text-center rounded overflow-hidden">
+        <thead class="thead-light">
             <tr>
                 {{$thead}}
             </tr>
@@ -29,7 +26,7 @@
 
 <style>
     .thead-theme{
-        background: #343a40;
+        background: #3b6ada !important;
         color: #ffff;
     }
 </style>

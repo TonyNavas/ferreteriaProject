@@ -18,6 +18,11 @@ class Sale extends Model
         'observation'
     ];
 
+    protected $casts = [
+        'date' => 'datetime',
+    ];
+
+
     // Relacion uno a muchos inversa
 
     public function customer()
@@ -32,5 +37,11 @@ class Sale extends Model
         return $this->morphToMany(Product::class, 'productable')
             ->withPivot('quantity', 'price', 'subtotal')
             ->withTimestamps();
+    }
+
+    // Relacion uno a muchos polomorfica
+
+    public function inventories(){
+        return $this->morphMany(Inventory::class, 'inventoryable');
     }
 }

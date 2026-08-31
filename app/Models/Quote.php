@@ -16,6 +16,10 @@ class Quote extends Model
         'observation'
     ];
 
+        protected $casts = [
+        'date' => 'datetime',
+    ];
+
     // Relacion uno a muchos inversa
 
     public function customer()

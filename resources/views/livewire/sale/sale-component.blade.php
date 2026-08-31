@@ -1,26 +1,21 @@
     <div x-data="{
         products: @entangle('products').live,
-    
+
         total: @entangle('total'),
-    
+
         removeProduct(index) {
             this.products.splice(index, 1);
         },
-    
+
         init() {
             this.$watch('products', (newProducts) => {
                 let total = 0;
-    
+
                 newProducts.forEach(product => {
                     total += product.quantity * product.price;
                 });
-    
+
                 this.total = total;
-    
-                // Deshabilitar almacén si hay productos
-                $('#warehouse')
-                    .prop('disabled', newProducts.length > 0)
-                    .trigger('change.select2');
             });
         }
     }">
@@ -48,13 +43,13 @@
                                 <div class="form-group col-12 col-sm-6 col-md-4 col-lg-2">
                                     <label for="serie">Serie</label>
                                     <input wire:model='serie' type="text" class="form-control w-100"
-                                        placeholder="Serie del comprobante" id="serie">
+                                        placeholder="Serie del comprobante" id="serie" readonly>
                                 </div>
 
                                 <div class="form-group col-12 col-sm-6 col-md-4 col-lg-2">
                                     <label for="correlative">Correlativo</label>
                                     <input wire:model='correlative' type="text" class="form-control w-100"
-                                        placeholder="Correlativo del comprobante">
+                                        placeholder="Correlativo del comprobante" readonly>
                                 </div>
 
                                 <div class="form-group col-12 col-sm-6 col-md-4 col-lg-2">
@@ -63,11 +58,11 @@
                                 </div>
 
                                 <div class="form-group col-12 col-sm-6 col-md-4 col-lg-4">
-
+                                    {{-- {{$quote_id}} --}}
                                     <div wire:ignore>
-                                        <label>Orden de compra</label>
-                                        <select id="purchaseOrder" class="form-control">
-                                            <option>Seleccionar orden de compra</option>
+                                        <label>Cotización</label>
+                                        <select id="quote" class="form-control">
+                                            <option>Seleccionar cotizacion</option>
                                         </select>
                                     </div>
                                 </div>
@@ -77,12 +72,10 @@
 
                             <div class="row">
                                 <div class="col-12 col-lg-6">
-                                    {{-- {{ $supplier_id }} --}}
-                                    {{-- Select2 --}}
                                     <div wire:ignore>
-                                        <label>Proveedor</label>
-                                        <select id="supplier" class="form-control">
-                                            <option>Seleccionar proveedor</option>
+                                        <label>Cliente</label>
+                                        <select id="customer" class="form-control">
+                                            <option>Selecciona un cliente</option>
                                         </select>
                                     </div>
                                 </div>
@@ -193,7 +186,7 @@
                 </x-slot:cardFooter>
             </x-card>
 
-            <x-card cardTitle="Listado de ordenes de compra">
+            <x-card cardTitle="Listado de ventas">
                 <x-slot:cardTools>
 
                 </x-slot:cardTools>
@@ -211,15 +204,15 @@
                             <th width="3%">Acciones</th>
                         </x-slot:thead>
 
-                        @forelse ($purchases as $index => $purchases)
+                        @forelse ($sales as $index => $sale)
                             <tr wire:key="Purchase-{{ $index }}" class="text-center">
-                                <td>{{ $purchases->id }}</td>
-                                <td>{{ $purchases->date->format('Y-m-d') }}</td>
-                                <td>{{ $purchases->serie }}</td>
-                                <td>{{ $purchases->correlative }}</td>
-                                <td>{{ $purchases->supplier->document_number }}</td>
-                                <td>{{ $purchases->supplier->name }}</td>
-                                <td>C${{ number_format($purchases->total, 2) }}</td>
+                                <td>{{ $sale->id }}</td>
+                                <td>{{ $sale->date->format('Y-m-d') }}</td>
+                                <td>{{ $sale->serie }}</td>
+                                <td>{{ $sale->correlative }}</td>
+                                <td>{{ $sale->customer->document_number }}</td>
+                                <td>{{ $sale->customer->name }}</td>
+                                <td>C${{ number_format($sale->total, 2) }}</td>
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn btn-sm bg-purple">
@@ -255,10 +248,10 @@
             <script>
                 document.addEventListener('livewire:init', () => {
 
-                    $('#supplier').select2({
+                    $('#customer').select2({
                         width: '100%',
                         ajax: {
-                            url: "{{ route('api.suppliers.index') }}",
+                            url: "{{ route('api.customers.index') }}",
                             type: 'POST',
                             dataType: 'json',
                             delay: 250,
@@ -271,32 +264,32 @@
                         }
                     });
 
-                    $('#supplier').on('change', function() {
-                        @this.set('supplier_id', $(this).val());
+                    $('#customer').on('change', function() {
+                        @this.set('customer_id', $(this).val());
                     });
 
                     // Escuchando evento para actualizar el select del proveedor
-                    Livewire.on('set-supplier', (data) => {
+                    Livewire.on('set-customer', (data) => {
 
                         let id = data.id;
 
                         // Crear opción manualmente si no existe
                         let option = new Option("Cargando...", id, true, true);
-                        $('#supplier').append(option).trigger('change');
+                        $('#customer').append(option).trigger('change');
 
                         // Opcional: traer el nombre real del supplier
                         $.ajax({
-                            url: "{{ route('api.suppliers.index') }}",
+                            url: "{{ route('api.customers.index') }}",
                             type: 'POST',
                             data: {
                                 selected: [id]
                             },
                             success: function(response) {
-                                let supplier = response[0];
+                                let customer = response[0];
 
-                                if (supplier) {
-                                    let option = new Option(supplier.text, supplier.id, true, true);
-                                    $('#supplier').empty().append(option).trigger('change');
+                                if (customer) {
+                                    let option = new Option(customer.text, customer.id, true, true);
+                                    $('#customer').empty().append(option).trigger('change');
                                 }
                             }
                         });
@@ -342,10 +335,10 @@
             <script>
                 document.addEventListener('livewire:init', () => {
 
-                    $('#purchaseOrder').select2({
+                    $('#quote').select2({
                         width: '100%',
                         ajax: {
-                            url: "{{ route('api.purchase-order.index') }}",
+                            url: "{{ route('api.quote.index') }}",
                             type: 'POST',
                             dataType: 'json',
                             delay: 250,
@@ -364,9 +357,9 @@
                         }
                     });
 
-                    $('#purchaseOrder').on('change', function() {
+                    $('#quote').on('change', function() {
                         let value = $(this).val();
-                        @this.set('purchase_order_id', value);
+                        @this.set('quote_id', value);
                     });
 
                 });

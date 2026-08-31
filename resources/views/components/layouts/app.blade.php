@@ -18,8 +18,8 @@
 
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__wobble" src="dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60"
-                width="60">
+            <img class="animation__wobble rounded-circle" src="{{asset('dist/img/logoprueba.png')}}" alt="AdminLTELogo" height="100"
+                width="100">
         </div>
 
         @include('components.layouts.partials.navigation')

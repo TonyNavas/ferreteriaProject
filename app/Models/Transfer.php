@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Transfer extends Model
 {
     protected $fillable = [
-        'type',
         'serie',
         'correlative',
         'date',
@@ -17,22 +16,35 @@ class Transfer extends Model
         'destination_warehouse_id',
     ];
 
+    protected $casts = [
+        'date' => 'datetime',
+    ];
+
     // Relacion muchos a muchos polimorfica
 
     public function products()
     {
-        return $this->morphToMany(Product::class, 'productable_id')
+        return $this->morphToMany(Product::class, 'productable')
             ->withPivot('quantity', 'price', 'subtotal')
             ->withTimestamps();
     }
 
     // Relacion uno a muchos inversas
 
-    public function originWarehouse(){
+    public function originWarehouse()
+    {
         return $this->belongsTo(Warehouse::class, 'origin_warehouse_id');
     }
 
-        public function destinationWarehouse(){
+    public function destinationWarehouse()
+    {
         return $this->belongsTo(Warehouse::class, 'destination_warehouse_id');
+    }
+
+    // Relacion uno a muchos polomorfica
+
+    public function inventories()
+    {
+        return $this->morphMany(Inventory::class, 'inventoryable');
     }
 }

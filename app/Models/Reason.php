@@ -8,5 +8,6 @@ class Reason extends Model
 {
     protected $fillable = [
         'name',
+        'type'
     ];
 }
